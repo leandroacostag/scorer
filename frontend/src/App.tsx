@@ -48,10 +48,10 @@ const App: React.FC = () => {
       >
         <AuthProvider>
           <DataProvider>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/register" element={<Register />} />
-              <Route element={<Layout />}>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/register" element={<Register />} />
                 <Route 
                   path="/friends" 
                   element={
@@ -76,8 +76,8 @@ const App: React.FC = () => {
                     </PrivateRoute>
                   } 
                 />
-              </Route>
-            </Routes>
+              </Routes>
+            </Layout>
           </DataProvider>
         </AuthProvider>
       </Auth0Provider>

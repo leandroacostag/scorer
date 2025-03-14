@@ -4,12 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { User } from '@/types';
 import { getUserProfile, setAuthTokenGetter } from '@/services';
 
-export interface AuthContextType {
+interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
-  getAccessToken: () => Promise<string | null>;
+  getAccessToken: () => Promise<string>;
   user: User | null;
-  signOut: () => void;
 }
 
 interface AuthProviderProps {
@@ -76,10 +75,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       isAuthenticated, 
       isLoading: auth0Loading || isLoading, 
       getAccessToken, 
-      user,
-      signOut: () => {
-        // Implementation of signOut method
-      }
+      user 
     }}>
       {children}
     </AuthContext.Provider>

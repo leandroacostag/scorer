@@ -36,13 +36,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     if (auth.getAccessToken) {
-      // Cast getAccessToken to ensure it never returns null
-      const getToken = async () => {
-        const token = await auth.getAccessToken();
-        if (!token) throw new Error('No auth token available');
-        return token;
-      };
-      setAuthTokenGetter(getToken);
+      setAuthTokenGetter(auth.getAccessToken);
     }
   }, [auth]);
 
@@ -106,10 +100,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       refreshData();
     }
   }, [isAuthenticated]);
-
-  useEffect(() => {
-    refreshData();
-  }, [refreshData]);
 
   return (
     <DataContext.Provider value={{

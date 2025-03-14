@@ -22,5 +22,4 @@ export {
   skipMatchValidation
 } from './api';
 
-const apiPath = './api';
-export default apiPath; 
+export default './api'; 

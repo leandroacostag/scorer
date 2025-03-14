@@ -13,8 +13,7 @@
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "build",
-        "buildCommand": "pnpm run vercel-build"
+        "distDir": "build"
       }
     }
   ],
@@ -39,9 +38,5 @@
       "src": "/(.*)",
       "dest": "frontend/build/index.html"
     }
-  ],
-  "env": {
-    "DISABLE_ESLINT_PLUGIN": "true",
-    "APP_MODULE": "main:app"
-  }
+  ]
 } 

@@ -46,7 +46,7 @@ const Matches: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   const getTeamPlayers = (match: Match, team: 'A' | 'B') => {
     return match.players.filter(player => player.team === team);
