@@ -29,6 +29,7 @@
   "scripts": {
     "prestart": "node scripts/generate-env-config.js",
     "start": "craco start",
+    "start:prod": "npx serve -s build",
     "prebuild": "node scripts/generate-env-config.js",
     "build": "craco build",
     "test": "craco test",
