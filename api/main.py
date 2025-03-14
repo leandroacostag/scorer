@@ -7,6 +7,7 @@ from matches import router as matches_router
 from utils.logging import logger, format_struct_log
 import traceback
 import uvicorn
+import os
 
 
 app = FastAPI(title="Scorer API")
@@ -67,7 +68,10 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with your frontend URL
+    allow_origins=[
+        "http://localhost:3000",
+        "https://scorer-frontend-f87215e579a7.herokuapp.com/"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -83,4 +87,5 @@ async def health_check():
     return {"status": "ok"}
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
