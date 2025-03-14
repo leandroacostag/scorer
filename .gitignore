@@ -29,6 +29,7 @@ yarn-debug.log
 yarn-error.log
 .pnpm-debug.log
 .pnpm-store/
+env-config.js
 
 # React
 /frontend/build
