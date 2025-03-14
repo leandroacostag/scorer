@@ -6,7 +6,7 @@
       "use": "@vercel/python",
       "config": {
         "runtime": "python3.9",
-        "buildCommand": "pip install poetry && poetry install"
+        "maxLambdaSize": "15mb"
       }
     },
     {
@@ -23,20 +23,12 @@
       "dest": "api/main.py"
     },
     {
-      "src": "/static/(.*)",
-      "dest": "frontend/build/static/$1"
-    },
-    {
-      "src": "/favicon.ico",
-      "dest": "frontend/build/favicon.ico"
-    },
-    {
-      "src": "/manifest.json",
-      "dest": "frontend/build/manifest.json"
+      "src": "/(.*\\.(js|json|css|ico|png|jpg|svg))",
+      "dest": "/build/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "frontend/build/index.html"
+      "dest": "/build/index.html"
     }
   ]
 } 

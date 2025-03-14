@@ -30,7 +30,9 @@
     "prebuild": "node scripts/generate-env-config.js",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "vercel-build": "node vercel-build.js",
+    "postinstall": "npm run prebuild"
   },
   "eslintConfig": {
     "extends": [

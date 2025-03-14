@@ -8,6 +8,7 @@ from utils.logging import logger, format_struct_log
 import traceback
 import uvicorn
 
+
 app = FastAPI(title="Scorer API")
 
 @app.middleware("http")
@@ -63,10 +64,10 @@ async def http_exception_handler(request: Request, exc: HTTPException):
         content={"detail": exc.detail}
     )
 
-# Add CORS middleware
+# Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # React app URL
+    allow_origins=["*"],  # In production, replace with your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -79,7 +80,7 @@ app.include_router(matches_router, prefix="/api/matches", tags=["Matches"])
 
 @app.get("/api/health")
 async def health_check():
-    return {"status": "healthy"}
+    return {"status": "ok"}
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

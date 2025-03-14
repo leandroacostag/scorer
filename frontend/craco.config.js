@@ -4,6 +4,11 @@ module.exports = {
   webpack: {
     alias: {
       '@': path.resolve(__dirname, 'src')
+    },
+    configure: {
+      output: {
+        path: undefined
+      }
     }
   }
 }; 

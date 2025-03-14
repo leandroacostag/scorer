@@ -1,11 +1,8 @@
 import axios from 'axios';
 import { User, UserCreate, Match, UserStats, LeaderboardEntry } from '../types';
 
-const API_URL = 'http://localhost:8000/api';
-
-// Create axios instance with auth header
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: '/api',  // Use relative path for production
   headers: {
     'Content-Type': 'application/json'
   },
