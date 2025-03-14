@@ -9,6 +9,7 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  // eslint-disable-next-line
   const { isAuthenticated, loginWithRedirect, logout, user: auth0User } = useAuth0();
   const { user } = useAuth();
   const location = useLocation();

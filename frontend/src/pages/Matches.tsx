@@ -46,6 +46,7 @@ const Matches: React.FC = () => {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line
   }, []);
 
   const getTeamPlayers = (match: Match, team: 'A' | 'B') => {

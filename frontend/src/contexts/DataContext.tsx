@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
-import { 
-  getFriendsList, 
-  getReceivedRequests, 
-  getSentRequests, 
+import {
+  getFriendsList,
+  getReceivedRequests,
+  getSentRequests,
   getUserMatches,
-  setAuthTokenGetter 
+  setAuthTokenGetter
 } from '@/services';
 import { User, Match } from '@/types';
 
@@ -26,7 +26,7 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const auth = useAuth();
   const { isAuthenticated } = auth;
-  
+
   const [friends, setFriends] = useState<User[]>([]);
   const [receivedRequests, setReceivedRequests] = useState<User[]>([]);
   const [sentRequests, setSentRequests] = useState<User[]>([]);
@@ -42,7 +42,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refreshFriends = async () => {
     if (!isAuthenticated) return;
-    
+
     try {
       setLoading(true);
       const [friendsData, receivedData, sentData] = await Promise.all([
@@ -64,7 +64,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refreshMatches = async () => {
     if (!isAuthenticated) return;
-    
+
     try {
       setLoading(true);
       const matchesData = await getUserMatches();
@@ -80,7 +80,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refreshData = async () => {
     if (!isAuthenticated) return;
-    
+
     try {
       setLoading(true);
       await Promise.all([
@@ -94,11 +94,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(false);
     }
   };
-
+  
   useEffect(() => {
     if (isAuthenticated) {
       refreshData();
     }
+    // eslint-disable-next-line
   }, [isAuthenticated]);
 
   return (
