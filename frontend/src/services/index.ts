@@ -1,6 +1,6 @@
 export {
   api,
-  getAccessToken,
+  getAuthToken,
   setAuthTokenGetter,
   registerUser,
   getUserProfile,

@@ -10,6 +10,7 @@ import Friends from './pages/Friends';
 import Leaderboard from './pages/Leaderboard';
 import Home from './pages/Home';
 import MatchesPage from './pages/Matches';
+import CreateMatch from './pages/CreateMatch';
 
 // Get Auth0 configuration from window.ENV
 const domain = window.ENV?.AUTH0_DOMAIN || '';
@@ -59,14 +60,24 @@ const App: React.FC = () => {
                     </PrivateRoute>
                   }
                 />
-                <Route
-                  path="matches/*"
-                  element={
-                    <PrivateRoute>
-                      <MatchesPage />
-                    </PrivateRoute>
-                  }
-                />
+                <Route path="matches">
+                  <Route
+                    index
+                    element={
+                      <PrivateRoute>
+                        <MatchesPage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="create"
+                    element={
+                      <PrivateRoute>
+                        <CreateMatch />
+                      </PrivateRoute>
+                    }
+                  />
+                </Route>
               </Route>
             </Routes>
           </DataProvider>

@@ -82,6 +82,7 @@ const Matches: React.FC = () => {
   };
 
   const handleCreateMatch = () => {
+    console.log('Create match button clicked');
     navigate('/matches/create');
   };
 

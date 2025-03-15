@@ -15,34 +15,34 @@ const api = axios.create({
 });
 
 // Create a function to get the token
-let getAccessToken: () => Promise<string>;
+let getAuthToken: () => Promise<string>;
 
 // Named exports
 export {
   api,
-  getAccessToken,
+  getAuthToken,
 };
 
 export const setAuthTokenGetter = (getter: () => Promise<string>) => {
-  getAccessToken = getter;
-};
-
-// Add auth token to all requests
-api.interceptors.request.use(
-  async (config) => {
+  getAuthToken = getter;
+  
+  // Set up axios interceptor to add the token to all requests
+  api.interceptors.request.use(async (config) => {
     try {
-      const token = await getAccessToken();
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+      if (getAuthToken) {
+        const token = await getAuthToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+          console.log('Added auth token to request');
+        }
       }
       return config;
     } catch (error) {
-      console.error('Error setting auth header:', error);
-      return Promise.reject(error);
+      console.error('Error setting auth token:', error);
+      return config;
     }
-  },
-  (error) => Promise.reject(error)
-);
+  });
+};
 
 // Add response interceptor for debugging
 api.interceptors.response.use(
