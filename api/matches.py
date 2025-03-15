@@ -202,7 +202,7 @@ async def get_user_stats(current_user: UserInDB = Depends(get_current_user)):
     return stats
 
 @router.get("/leaderboard")
-async def get_leaderboard(current_user: UserInDB = Depends(get_current_user)):
+async def get_leaderboard(year: Optional[str] = None, current_user: UserInDB = Depends(get_current_user)):
     try:
         # Get all friends plus current user
         friend_ids = current_user.friends + [current_user.auth_id]
@@ -216,24 +216,34 @@ async def get_leaderboard(current_user: UserInDB = Depends(get_current_user)):
         # Initialize leaderboard with users (even those with no matches)
         leaderboard = [
             {
-                "user_id": user_id,
-                "username": username_map.get(user_id, "Unknown User"),
-                "total_matches": 0,
+                "user_id": user["auth_id"],
+                "username": user["username"],
+                "matches_played": 0,
                 "wins": 0,
+                "draws": 0,
+                "losses": 0,
                 "goals": 0,
-                "assists": 0
+                "assists": 0,
+                "points": 0
             }
-            for user_id in friend_ids if user_id in username_map
+            for user in users
         ]
         
-        # Track user stats by auth_id for efficiency
+        # Create a map for quick access to user stats
         user_stats_map = {entry["user_id"]: entry for entry in leaderboard}
         
-        # Get all validated matches where any of these users are players (in one query)
-        matches = matches_collection.find({
+        # Get all validated matches involving these users
+        match_query = {
             "players.user_id": {"$in": friend_ids},
             "is_validated": True
-        }, {"_id": 0})
+        }
+        
+        # Add year filter if provided
+        if year:
+            # Extract year from date field (assuming ISO format YYYY-MM-DD)
+            match_query["$expr"] = {"$eq": [{"$year": "$date"}, int(year)]}
+        
+        matches = matches_collection.find(match_query, {"_id": 0})
         
         for match in matches:
             # Process each player in the match
@@ -245,20 +255,39 @@ async def get_leaderboard(current_user: UserInDB = Depends(get_current_user)):
                     continue
                 
                 user_stats = user_stats_map[player_id]
-                user_stats["total_matches"] += 1
+                user_stats["matches_played"] += 1
                 user_stats["goals"] += player["goals"]
                 user_stats["assists"] += player["assists"]
                 
-                # Determine win based on team and score
+                # Determine win/draw/loss based on team and score
                 if (player["team"] == "A" and match["score"]["teamA"] > match["score"]["teamB"]) or \
                    (player["team"] == "B" and match["score"]["teamB"] > match["score"]["teamA"]):
                     user_stats["wins"] += 1
+                elif match["score"]["teamA"] == match["score"]["teamB"]:
+                    user_stats["draws"] += 1
+                else:
+                    user_stats["losses"] += 1
+                
+                # Calculate points based on our formula
+                # 3 points for win, 0 for draw/loss
+                win_points = user_stats["wins"] * 3
+                
+                # Points for goals based on match format
+                goal_points = 0
+                if match["format"] in ["F8", "F9", "F10", "F11"]:
+                    # 1 point per goal for F8 and above
+                    goal_points += player["goals"]
+                else:
+                    # 1 point per 2 goals for F7 and below
+                    goal_points += player["goals"] // 2
+                
+                user_stats["points"] = win_points + goal_points
         
-        # Sort leaderboard by wins, then goals, then assists
-        leaderboard.sort(key=lambda x: (x["wins"], x["goals"], x["assists"]), reverse=True)
+        # Sort leaderboard by points, then wins, then goals
+        leaderboard.sort(key=lambda x: (x["points"], x["wins"], x["goals"]), reverse=True)
         
         # Remove users with no matches
-        leaderboard = [user for user in leaderboard if user["total_matches"] > 0]
+        leaderboard = [user for user in leaderboard if user["matches_played"] > 0]
         
         return leaderboard
     except Exception as e:

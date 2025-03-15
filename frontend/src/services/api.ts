@@ -136,8 +136,9 @@ export const getUserStats = async () => {
   return response.data;
 };
 
-export const getLeaderboard = async () => {
-  const response = await api.get<LeaderboardEntry[]>('/matches/leaderboard');
+export const getLeaderboard = async (year?: string) => {
+  const url = year ? `/matches/leaderboard?year=${year}` : '/matches/leaderboard';
+  const response = await api.get(url);
   return response.data;
 };
 
