@@ -7,8 +7,8 @@ import { FaUser, FaSpinner } from 'react-icons/fa';
 import LoadingScreen from '@/components/LoadingScreen';
 
 const Register: React.FC = () => {
-  const { user: auth0User } = useAuth0();
-  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { user: auth0User, isAuthenticated: auth0IsAuthenticated } = useAuth0();
+  const { user, isAuthenticated, isLoading: authLoading, needsRegistration } = useAuth();
   const [username, setUsername] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,23 @@ const Register: React.FC = () => {
       console.log("User is registered, redirecting to home");
       navigate('/');
     }
-  }, [isAuthenticated, user, navigate]);
+    // If not authenticated at all, redirect to home
+    if (!auth0IsAuthenticated && !authLoading) {
+      console.log("User not authenticated, redirecting to home");
+      navigate('/');
+    }
+  }, [isAuthenticated, user, navigate, auth0IsAuthenticated, authLoading]);
+
+  // Debug logging for registration page
+  useEffect(() => {
+    console.log('Register page state:', {
+      auth0IsAuthenticated,
+      isAuthenticated,
+      authLoading,
+      needsRegistration,
+      hasUsername: user?.username ? true : false
+    });
+  }, [auth0IsAuthenticated, isAuthenticated, authLoading, needsRegistration, user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,16 +78,30 @@ const Register: React.FC = () => {
     }
   };
 
-  // Show loading screen while auth is loading
-  if (authLoading) {
+  // Show loading screen while auth is loading, but only if we don't need registration
+  if (authLoading && !needsRegistration) {
     return <LoadingScreen />;
+  }
+
+  // If not authenticated with Auth0, redirect to home
+  if (!auth0IsAuthenticated && !authLoading) {
+    console.log("User not authenticated with Auth0, redirecting to home");
+    navigate('/');
+    return null;
+  }
+
+  // If already registered (has username), redirect to home
+  if (isAuthenticated && user?.username && !authLoading) {
+    console.log("User is already registered, redirecting to home");
+    navigate('/');
+    return null;
   }
 
   return (
     <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-6 text-center text-green-700">Complete Your Registration</h1>
       
-      {!isAuthenticated ? (
+      {!auth0IsAuthenticated ? (
         <div className="text-center">
           <p className="mb-4">You need to be logged in to register.</p>
           <button
@@ -83,6 +113,11 @@ const Register: React.FC = () => {
         </div>
       ) : (
         <>
+          {needsRegistration && (
+            <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+              You need to complete your registration by choosing a username.
+            </div>
+          )}
           <p className="mb-6 text-gray-600">
             Choose a username to complete your registration.
           </p>

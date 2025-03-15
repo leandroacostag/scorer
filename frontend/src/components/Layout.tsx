@@ -16,7 +16,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
-      <main className="md:ml-64 px-4 py-8 pt-24 md:pt-8">
+      <main className="md:ml-64 px-4 py-8 pt-24">
         {children || <Outlet />}
       </main>
     </div>

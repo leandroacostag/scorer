@@ -34,8 +34,8 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, sidebarOpen }) => {
 
   return (
     <>
-      <header className="bg-green-700 text-white shadow-md fixed top-0 left-0 right-0 z-20">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+      <header className="bg-green-700 text-white shadow-md fixed top-0 left-0 right-0 z-20 h-16 flex items-center">
+        <div className="container mx-auto px-4 flex justify-between items-center h-full">
           <div className="flex items-center">
             <button 
               onClick={toggleSidebar} 

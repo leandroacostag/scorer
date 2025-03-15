@@ -42,7 +42,7 @@ const Home: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto mt-8">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-gray-800 mb-4">Track Your Football Stats</h1>
         <p className="text-xl text-gray-600 mb-8">
