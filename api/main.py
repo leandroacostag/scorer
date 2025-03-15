@@ -69,8 +69,7 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",
-        "https://scorer-frontend-f87215e579a7.herokuapp.com/"
+        os.getenv("FRONTEND_URL", "http://localhost:3000")
     ],
     allow_credentials=True,
     allow_methods=["*"],
