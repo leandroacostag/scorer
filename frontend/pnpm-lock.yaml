@@ -35,6 +35,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.0
         version: 18.3.5(@types/react@18.3.18)
+      autoprefixer:
+        specifier: ^10.4.15
+        version: 10.4.21(postcss@8.5.3)
       axios:
         specifier: ^1.5.0
         version: 1.8.3
@@ -44,6 +47,9 @@ importers:
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
+      postcss:
+        specifier: ^8.4.29
+        version: 8.5.3
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -68,6 +74,9 @@ importers:
       serve:
         specifier: ^14.2.1
         version: 14.2.4
+      tailwindcss:
+        specifier: ^3.3.3
+        version: 3.4.17(ts-node@10.9.2(@types/node@16.18.126)(typescript@4.9.5))
       typescript:
         specifier: ^4.9.5
         version: 4.9.5
@@ -78,15 +87,6 @@ importers:
       '@types/node':
         specifier: ^16.18.126
         version: 16.18.126
-      autoprefixer:
-        specifier: ^10.4.15
-        version: 10.4.21(postcss@8.5.3)
-      postcss:
-        specifier: ^8.4.29
-        version: 8.5.3
-      tailwindcss:
-        specifier: ^3.3.3
-        version: 3.4.17(ts-node@10.9.2(@types/node@16.18.126)(typescript@4.9.5))
 
 packages:
 
