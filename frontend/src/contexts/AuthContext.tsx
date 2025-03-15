@@ -22,6 +22,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCheckingRegistration, setIsCheckingRegistration] = useState(false);
 
   const getAccessToken = useCallback(async () => {
     try {
@@ -45,10 +46,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const checkRegistration = async () => {
-      if (isAuthenticated && !user) {
+      if (isAuthenticated && !user && !isCheckingRegistration) {
         try {
+          setIsCheckingRegistration(true);
           setIsLoading(true);
+          console.log('Checking user registration...');
           const userData = await getUserProfile();
+          console.log('User profile retrieved:', userData);
           setUser(userData);
         } catch (error: any) {
           console.error('Error checking registration:', error);
@@ -56,6 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             navigate('/register');
           }
         } finally {
+          setIsCheckingRegistration(false);
           setIsLoading(false);
         }
       } else if (!isAuthenticated) {
@@ -64,11 +69,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     checkRegistration();
-  }, [isAuthenticated, user, navigate]);
+  }, [isAuthenticated, user, navigate, isCheckingRegistration]);
 
+  // Debug logging
   useEffect(() => {
-    console.log('AuthProvider State:', { isAuthenticated, isLoading });
-  }, [isAuthenticated, isLoading]);
+    console.log('AuthProvider State:', { 
+      isAuthenticated, 
+      isLoading: auth0Loading || isLoading,
+      auth0Loading,
+      user: user ? 'Set' : 'Not set',
+      isCheckingRegistration
+    });
+  }, [isAuthenticated, isLoading, auth0Loading, user, isCheckingRegistration]);
 
   return (
     <AuthContext.Provider value={{ 

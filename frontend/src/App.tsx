@@ -26,17 +26,17 @@ if (!domain || !clientId || !audience) {
   console.error('Missing Auth0 configuration');
 }
 
-function App() {
+const App: React.FC = () => {
   return (
-    <Router>
-      <Auth0Provider
-        domain={domain}
-        clientId={clientId}
-        authorizationParams={{
-          redirect_uri: window.location.origin,
-          audience: audience,
-        }}
-      >
+    <Auth0Provider
+      domain={domain}
+      clientId={clientId}
+      authorizationParams={{
+        redirect_uri: window.location.origin,
+        audience: audience
+      }}
+    >
+      <Router>
         <AuthProvider>
           <DataProvider>
             <Routes>
@@ -60,7 +60,7 @@ function App() {
                   }
                 />
                 <Route
-                  path="matches"
+                  path="matches/*"
                   element={
                     <PrivateRoute>
                       <MatchesPage />
@@ -71,9 +71,9 @@ function App() {
             </Routes>
           </DataProvider>
         </AuthProvider>
-      </Auth0Provider>
-    </Router>
+      </Router>
+    </Auth0Provider>
   );
-}
+};
 
 export default App; 

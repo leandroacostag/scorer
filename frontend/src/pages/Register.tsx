@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useAuth } from '@/contexts';
 import { registerUser } from '@/services';
-import { FaUser } from 'react-icons/fa';
+import { FaUser, FaSpinner } from 'react-icons/fa';
+import LoadingScreen from '@/components/LoadingScreen';
 
 const Register: React.FC = () => {
   const { user: auth0User } = useAuth0();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [username, setUsername] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -61,58 +62,77 @@ const Register: React.FC = () => {
     }
   };
 
+  // Show loading screen while auth is loading
+  if (authLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <div className="bg-white p-8 rounded-lg shadow-md">
-        <div className="text-center mb-6">
-          <FaUser className="mx-auto text-4xl text-green-600 mb-2" />
-          <h1 className="text-2xl font-bold">Choose Your Username</h1>
-          <p className="text-gray-600">This will be your unique identifier in the app</p>
-        </div>
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="username" className="block text-gray-700 font-medium mb-2">
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-              placeholder="Enter your username"
-              disabled={loading}
-            />
-            <p className="text-sm text-gray-500 mt-1">
-              3-20 characters, letters, numbers, and underscores only
-            </p>
-          </div>
-
+    <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold mb-6 text-center text-green-700">Complete Your Registration</h1>
+      
+      {!isAuthenticated ? (
+        <div className="text-center">
+          <p className="mb-4">You need to be logged in to register.</p>
           <button
-            type="submit"
-            disabled={loading}
-            className={`w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 ${
-              loading ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            onClick={() => window.location.href = '/'}
+            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
           >
-            {loading ? (
-              <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2" />
-                Registering...
-              </div>
-            ) : (
-              'Continue'
-            )}
+            Go to Login
           </button>
-        </form>
-      </div>
+        </div>
+      ) : (
+        <>
+          <p className="mb-6 text-gray-600">
+            Choose a username to complete your registration.
+          </p>
+          
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              {error}
+            </div>
+          )}
+          
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label htmlFor="username" className="block text-gray-700 font-bold mb-2">
+                Username
+              </label>
+              <div className="flex">
+                <span className="inline-flex items-center px-3 bg-gray-200 text-gray-600 rounded-l-md border border-r-0 border-gray-300">
+                  <FaUser />
+                </span>
+                <input
+                  type="text"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="flex-grow p-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="Choose a username"
+                />
+              </div>
+              <p className="text-sm text-gray-500 mt-1">
+                3-20 characters, letters, numbers, and underscores only
+              </p>
+            </div>
+            
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center justify-center"
+            >
+              {loading ? (
+                <>
+                  <FaSpinner className="animate-spin mr-2" />
+                  Registering...
+                </>
+              ) : (
+                'Complete Registration'
+              )}
+            </button>
+          </form>
+        </>
+      )}
     </div>
   );
 };

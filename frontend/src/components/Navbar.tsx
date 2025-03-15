@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useAuth } from '../contexts';
-import { FaHome, FaUserFriends, FaFutbol, FaTrophy, FaSignOutAlt, FaSignInAlt, FaUser } from 'react-icons/fa';
+import { FaHome, FaUserFriends, FaFutbol, FaTrophy, FaSignOutAlt, FaSignInAlt, FaUser, FaSpinner } from 'react-icons/fa';
 
 const Navbar: React.FC = () => {
-  const { isAuthenticated, loginWithRedirect, logout} = useAuth0();
-  const { user } = useAuth();
+  const { loginWithRedirect, logout } = useAuth0();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -33,24 +33,29 @@ const Navbar: React.FC = () => {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link to="/" className="text-xl font-bold">Scorer</Link>
           <div className="flex items-center space-x-4">
-            {isAuthenticated ? (
+            {isLoading ? (
+              <div className="flex items-center space-x-2">
+                <FaSpinner className="animate-spin text-lg" />
+                <span className="hidden md:inline">Loading...</span>
+              </div>
+            ) : isAuthenticated ? (
               <>
                 <div className="flex items-center space-x-2">
                   <FaUser className="text-lg" />
                   <span className="hidden md:inline">
-                    {user?.username || 'Set up username'}
+                    {user?.username || 'User'}
                   </span>
                 </div>
-                <button 
+                <button
                   onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-                  className="flex items-center space-x-1 bg-red-600 hover:bg-red-700 px-3 py-1 rounded"
+                  className="flex items-center space-x-1 bg-green-600 hover:bg-green-800 px-3 py-1 rounded"
                 >
                   <FaSignOutAlt />
-                  <span className="hidden md:inline">Logout</span>
+                  <span>Logout</span>
                 </button>
               </>
             ) : (
-              <button 
+              <button
                 onClick={() => loginWithRedirect()}
                 className="flex items-center space-x-1 bg-green-600 hover:bg-green-800 px-3 py-1 rounded"
               >

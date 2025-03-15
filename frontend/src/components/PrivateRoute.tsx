@@ -1,20 +1,21 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '../contexts';
+import LoadingScreen from './LoadingScreen';
 
-const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, isLoading } = useAuth();
+interface PrivateRouteProps {
+  children: ReactNode;
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingScreen />;
   }
 
-  if (!user) {
-    return <Navigate to="/register" />;
-  }
-
-  if (!user.username) {
-    return <Navigate to="/register" />;
+  if (!isAuthenticated) {
+    return <Navigate to="/" />;
   }
 
   return <>{children}</>;

@@ -1,10 +1,18 @@
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth } from '@/contexts';
+import LoadingScreen from '@/components/LoadingScreen';
 import { Link } from 'react-router-dom';
 import { FaUserFriends, FaFutbol, FaClipboardList, FaTrophy } from 'react-icons/fa';
 
 const Home: React.FC = () => {
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { loginWithRedirect } = useAuth0();
+  const { isAuthenticated, isLoading, user } = useAuth();
+
+  // Show loading screen when authentication is in progress
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   const features = [
     {
@@ -41,13 +49,30 @@ const Home: React.FC = () => {
           Keep track of your football matches, goals, assists, and more with your friends
         </p>
         
-        {!isAuthenticated && (
-          <button
-            onClick={() => loginWithRedirect()}
-            className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300"
-          >
-            Get Started
-          </button>
+        {isAuthenticated && user ? (
+          <div>
+            <p className="text-lg mb-4">
+              Hello, <span className="font-semibold">{user.username}</span>! You're logged in.
+            </p>
+            <p className="mb-4">
+              Use the navigation menu to access your matches, friends, and leaderboards.
+            </p>
+          </div>
+        ) : (
+          <div>
+            <p className="text-lg mb-4">
+              Scorer is a simple app to track scores for your games with friends.
+            </p>
+            <p className="mb-6">
+              Sign up or log in to start tracking your matches and see who's winning!
+            </p>
+            <button
+              onClick={() => loginWithRedirect()}
+              className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300"
+            >
+              Get Started
+            </button>
+          </div>
         )}
       </div>
 
