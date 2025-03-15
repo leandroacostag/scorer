@@ -36,6 +36,8 @@ const App: React.FC = () => {
         redirect_uri: window.location.origin,
         audience: audience
       }}
+      useRefreshTokens={true}
+      cacheLocation="localstorage"
     >
       <Router>
         <AuthProvider>
