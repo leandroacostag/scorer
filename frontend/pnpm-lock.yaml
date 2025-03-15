@@ -26,6 +26,9 @@ importers:
       '@types/jest':
         specifier: ^27.5.2
         version: 27.5.2
+      '@types/node':
+        specifier: ^16.18.126
+        version: 16.18.126
       '@types/react':
         specifier: ^18.2.0
         version: 18.3.18
@@ -92,10 +95,6 @@ importers:
       web-vitals:
         specifier: ^2.1.4
         version: 2.1.4
-    devDependencies:
-      '@types/node':
-        specifier: ^16.18.126
-        version: 16.18.126
 
 packages:
 
