@@ -11,28 +11,22 @@ import Leaderboard from './pages/Leaderboard';
 import Home from './pages/Home';
 import MatchesPage from './pages/Matches';
 
-declare global {
-    interface Window {
-        env: {
-            AUTH0_DOMAIN: string;
-            AUTH0_CLIENT_ID: string;
-            AUTH0_AUDIENCE: string;
-        }
-    }
-}
+// Get Auth0 configuration from window.ENV
+const domain = window.ENV?.AUTH0_DOMAIN || '';
+const clientId = window.ENV?.AUTH0_CLIENT_ID || '';
+const audience = window.ENV?.AUTH0_AUDIENCE || '';
 
-// Get Auth0 configuration from window.env
-const domain = window.env.AUTH0_DOMAIN;
-const clientId = window.env.AUTH0_CLIENT_ID;
-const audience = window.env.AUTH0_AUDIENCE;
+console.log('Auth0 Config:', { 
+  domain: domain ? 'Set' : 'Not set', 
+  clientId: clientId ? 'Set' : 'Not set', 
+  audience: audience ? 'Set' : 'Not set' 
+});
 
 if (!domain || !clientId || !audience) {
-  throw new Error('Missing Auth0 configuration');
+  console.error('Missing Auth0 configuration');
 }
 
-const App: React.FC = () => {
-  console.log('Auth0 Config:', { domain, clientId, audience });
-
+function App() {
   return (
     <Router>
       <Auth0Provider
@@ -41,48 +35,45 @@ const App: React.FC = () => {
         authorizationParams={{
           redirect_uri: window.location.origin,
           audience: audience,
-          scope: "openid profile email"
         }}
-        useRefreshTokens={true}
-        cacheLocation="localstorage"
       >
         <AuthProvider>
           <DataProvider>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/register" element={<Register />} />
-                <Route 
-                  path="/friends" 
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Home />} />
+                <Route path="register" element={<Register />} />
+                <Route
+                  path="friends"
                   element={
                     <PrivateRoute>
                       <Friends />
                     </PrivateRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="/matches" 
-                  element={
-                    <PrivateRoute>
-                      <MatchesPage />
-                    </PrivateRoute>
-                  } 
-                />
-                <Route 
-                  path="/leaderboard" 
+                <Route
+                  path="leaderboard"
                   element={
                     <PrivateRoute>
                       <Leaderboard />
                     </PrivateRoute>
-                  } 
+                  }
                 />
-              </Routes>
-            </Layout>
+                <Route
+                  path="matches"
+                  element={
+                    <PrivateRoute>
+                      <MatchesPage />
+                    </PrivateRoute>
+                  }
+                />
+              </Route>
+            </Routes>
           </DataProvider>
         </AuthProvider>
       </Auth0Provider>
     </Router>
   );
-};
+}
 
 export default App; 

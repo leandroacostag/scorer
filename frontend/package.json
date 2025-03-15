@@ -5,6 +5,7 @@
   "dependencies": {
     "@auth0/auth0-react": "^2.3.0",
     "@craco/craco": "^7.1.0",
+    "cross-env": "^7.0.3",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -30,14 +31,15 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "prestart": "node scripts/generate-env-config.js",
+    "prestart": "cross-env NODE_ENV=development node scripts/generate-env-config.js",
     "start": "craco start",
-    "start:prod": "npx serve -s build",
-    "prebuild": "node scripts/generate-env-config.js",
+    "start:local": "cross-env NODE_ENV=development API_URL=http://localhost:8000 node scripts/generate-env-config.js && craco start",
+    "start:prod": "node scripts/generate-env-config.js && npx serve -s build",
+    "prebuild": "cross-env NODE_ENV=production node scripts/generate-env-config.js",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "heroku-postbuild": "npm run build",
+    "heroku-postbuild": "npm run prebuild && npm run build",
     "postinstall": "npm run prebuild"
   },
   "eslintConfig": {

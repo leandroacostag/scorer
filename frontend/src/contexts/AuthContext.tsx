@@ -27,7 +27,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const token = await getAccessTokenSilently({
         authorizationParams: {
-          audience: window.env.AUTH0_AUDIENCE,
+          audience: window.ENV?.AUTH0_AUDIENCE || '',
           scope: 'openid profile email'
         }
       });
