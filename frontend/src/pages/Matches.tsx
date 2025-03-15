@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { validateMatch, getPendingValidationMatches, addPlayerStatsToMatch, skipMatchValidation } from '@/services';
 import { Match } from '@/types';
-import { FaFutbol, FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaCheck, FaSync, FaTimes, FaPlusCircle, FaPlus } from 'react-icons/fa';
+import { FaFutbol, FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaCheck, FaSync, FaTimes, FaPlusCircle, FaPlus, FaSpinner } from 'react-icons/fa';
 import { format } from 'date-fns';
 
 const Matches: React.FC = () => {
@@ -290,13 +290,26 @@ const Matches: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Matches</h1>
-        <button
-          onClick={handleCreateMatch}
-          className="flex items-center bg-green-600 hover:bg-green-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base"
-        >
-          <FaPlus className="mr-1 sm:mr-2" />
-          <span className="hidden xs:inline">Create Match</span>
-        </button>
+        <div className="flex space-x-2">
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base"
+          >
+            {refreshing ? (
+              <FaSpinner className="animate-spin" />
+            ) : (
+              <FaSync />
+            )}
+          </button>
+          <button
+            onClick={handleCreateMatch}
+            className="flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base"
+          >
+            <FaPlus className="sm:mr-2" />
+            <span className="hidden sm:inline">Create Match</span>
+          </button>
+        </div>
       </div>
       
       {error && (

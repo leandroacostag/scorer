@@ -302,11 +302,7 @@ const CreateMatch: React.FC = () => {
               </div>
             </div>
           </div>
-          
-          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6">
-            <p>Note: This is a simplified form. In a complete version, you would add all players, assign them to teams, and record their stats.</p>
-          </div>
-          
+                    
           <div className="flex items-center justify-between">
             <button
               type="submit"
