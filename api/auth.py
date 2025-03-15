@@ -23,8 +23,6 @@ AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
 AUTH0_AUDIENCE = os.environ.get("AUTH0_AUDIENCE")
 AUTH0_ALGORITHMS = ["RS256"]
 
-print(f"Auth0 config: Domain={AUTH0_DOMAIN}, Audience={AUTH0_AUDIENCE}")
-
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     # logger.debug("Authenticating user")
     token = credentials.credentials
@@ -178,7 +176,7 @@ async def register_user(user_data: UserCreate):
             existing_user["email"] = user_data.email
             existing_user["created_at"] = now
             return UserResponse(
-                id=str(existing_user["_id"]),
+                auth_id=str(existing_user["auth_id"]),
                 username=existing_user["username"],
                 email=existing_user["email"],
                 friends=existing_user.get("friends", []),
