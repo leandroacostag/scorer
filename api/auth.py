@@ -221,3 +221,21 @@ async def register_user(user_data: UserCreate):
 @router.get("/me", response_model=UserResponse)
 async def get_user_profile(current_user: UserInDB = Depends(get_current_user)):
     return UserResponse(**current_user.dict()) 
+
+@router.get("/health", response_model=dict)
+async def auth_health_check():
+    try:
+        # Test MongoDB connection
+        db_status = "connected" if users_collection.find_one({}, {"_id": 1}) is not None else "no data"
+        return {
+            "status": "ok",
+            "mongodb": db_status,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        } 
