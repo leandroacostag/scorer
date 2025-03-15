@@ -50,6 +50,12 @@ importers:
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
+      eslint:
+        specifier: ^8.56.0
+        version: 8.57.1
+      eslint-config-react-app:
+        specifier: ^7.0.1
+        version: 7.0.1(@babel/plugin-syntax-flow@7.26.0(@babel/core@7.26.10))(@babel/plugin-transform-react-jsx@7.25.9(@babel/core@7.26.10))(eslint@8.57.1)(jest@27.5.1(ts-node@10.9.2(@types/node@16.18.126)(typescript@4.9.5)))(typescript@4.9.5)
       postcss:
         specifier: ^8.4.29
         version: 8.5.3

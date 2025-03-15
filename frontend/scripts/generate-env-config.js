@@ -34,14 +34,14 @@ if (isProduction) {
     AUTH0_DOMAIN: envConfig.AUTH0_DOMAIN ? 'Set' : 'Not set',
     AUTH0_CLIENT_ID: envConfig.AUTH0_CLIENT_ID ? 'Set' : 'Not set',
     AUTH0_AUDIENCE: envConfig.AUTH0_AUDIENCE ? 'Set' : 'Not set',
-    API_URL: 'Set to production URL'
+    API_URL: envConfig.API_URL ? 'Set' : 'Not set'
   });
 } else {
   console.log('Environment variables loaded:', {
-    AUTH0_DOMAIN: envConfig.AUTH0_DOMAIN,
+    AUTH0_DOMAIN: envConfig.AUTH0_DOMAIN ? 'Set' : 'Not set',
     AUTH0_CLIENT_ID: envConfig.AUTH0_CLIENT_ID ? 'Set' : 'Not set',
     AUTH0_AUDIENCE: envConfig.AUTH0_AUDIENCE ? 'Set' : 'Not set',
-    API_URL: envConfig.API_URL
+    API_URL: envConfig.API_URL ? 'Set': 'Not Set'
   });
 }
 
