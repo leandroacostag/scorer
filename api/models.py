@@ -25,6 +25,7 @@ class UserInDB(BaseModel):
     pending_sent_requests: List[str] = Field(default_factory=list)
     pending_received_requests: List[str] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    mutual_friends: int = Field(default=0)
 
     class Config:
         populate_by_name = True
@@ -33,7 +34,7 @@ class UserInDB(BaseModel):
 class UserResponse(BaseModel):
     auth_id: str
     username: str
-    email: str
+    email: Optional[str] = None
     is_friend: Optional[bool] = None
     is_pending_friend: Optional[bool] = None
     is_pending_request: Optional[bool] = None

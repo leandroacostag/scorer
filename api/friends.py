@@ -99,7 +99,6 @@ async def get_friends_list(current_user: UserInDB = Depends(get_current_user)):
         user_response = {
             "auth_id": user["auth_id"],
             "username": user["username"],
-            "email": user["email"],
             "is_friend": True,
             "is_pending_friend": False,
             "is_pending_request": False,
@@ -116,7 +115,6 @@ async def get_received_requests(current_user: UserInDB = Depends(get_current_use
         user_response = {
             "auth_id": user["auth_id"],
             "username": user["username"],
-            "email": user["email"],
             "is_friend": False,
             "is_pending_friend": False,
             "is_pending_request": True,
@@ -133,7 +131,6 @@ async def get_sent_requests(current_user: UserInDB = Depends(get_current_user)):
         user_response = {
             "auth_id": user["auth_id"],
             "username": user["username"],
-            "email": user["email"],
             "is_friend": False,
             "is_pending_friend": True,
             "is_pending_request": False,
@@ -157,7 +154,6 @@ async def search_users(query: str, current_user: UserInDB = Depends(get_current_
         user_response = {
             "auth_id": user_auth_id,
             "username": user["username"],
-            "email": user["email"],
             "is_friend": user_auth_id in current_user.friends,
             "is_pending_friend": user_auth_id in current_user.pending_sent_requests,
             "is_pending_request": user_auth_id in current_user.pending_received_requests,
@@ -188,3 +184,20 @@ async def remove_friend(friend_id: str, current_user: UserInDB = Depends(get_cur
     )
     
     return {"message": "Friend removed successfully"} 
+
+@router.get("/suggestions")
+async def get_friend_suggestions(current_user: UserInDB = Depends(get_current_user)):
+    # Get friends of friends which are not already friends, show friends with most mutual friends first
+    suggested_friends = list(users_collection.aggregate([
+        {"$match": {"auth_id": {"$in": current_user.friends}}},
+        {"$unwind": "$friends"},
+        {"$match": {"friends": {"$ne": current_user.auth_id}}},
+        {"$group": {"_id": "$friends", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}},
+        {"$limit": 5},
+        {"$lookup": {"from": "users", "localField": "_id", "foreignField": "auth_id", "as": "user"}},
+        {"$unwind": "$user"},
+        {"$project": {"_id": 0, "auth_id": "$user.auth_id", "username": "$user.username", "mutual_friends": "$count"}}
+    ]))
+
+    return suggested_friends

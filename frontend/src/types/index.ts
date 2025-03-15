@@ -1,9 +1,9 @@
 export interface User {
   auth_id: string;
   username: string;
-  email: string;
-  created_at: string;
-  updated_at: string;
+  email?: string;
+  created_at?: string;
+  updated_at?: string;
   is_friend?: boolean;
   is_pending_friend?: boolean;
   is_pending_request?: boolean;
