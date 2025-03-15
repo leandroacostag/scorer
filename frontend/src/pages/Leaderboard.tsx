@@ -65,14 +65,14 @@ const Leaderboard: React.FC = () => {
         <button
           onClick={handleRefresh}
           disabled={refreshing}
-          className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base"
         >
           {refreshing ? (
-            <FaSpinner className="animate-spin mr-2" />
+            <FaSpinner className="animate-spin mr-1 sm:mr-2" />
           ) : (
-            <FaSync className="mr-2" />
+            <FaSync className="mr-1 sm:mr-2" />
           )}
-          Refresh
+          <span className="hidden xs:inline">Refresh</span>
         </button>
       </div>
 

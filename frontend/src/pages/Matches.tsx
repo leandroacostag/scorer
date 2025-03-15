@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { validateMatch, getPendingValidationMatches, addPlayerStatsToMatch, skipMatchValidation } from '@/services';
 import { Match } from '@/types';
-import { FaFutbol, FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaCheck, FaSync, FaTimes, FaPlusCircle } from 'react-icons/fa';
+import { FaFutbol, FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaCheck, FaSync, FaTimes, FaPlusCircle, FaPlus } from 'react-icons/fa';
 import { format } from 'date-fns';
 
 const Matches: React.FC = () => {
@@ -290,27 +290,13 @@ const Matches: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Matches</h1>
-        <div className="flex space-x-2">
-          <button 
-            onClick={handleRefresh}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded flex items-center"
-            disabled={refreshing}
-          >
-            {refreshing ? (
-              <FaSync className="animate-spin mr-2" />
-            ) : (
-              <FaSync className="mr-2" />
-            )}
-            Refresh
-          </button>
-          <button
-            onClick={handleCreateMatch}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded flex items-center"
-          >
-            <FaPlusCircle className="mr-2" />
-            Create Match
-          </button>
-        </div>
+        <button
+          onClick={handleCreateMatch}
+          className="flex items-center bg-green-600 hover:bg-green-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base"
+        >
+          <FaPlus className="mr-1 sm:mr-2" />
+          <span className="hidden xs:inline">Create Match</span>
+        </button>
       </div>
       
       {error && (
