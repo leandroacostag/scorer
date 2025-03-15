@@ -10,6 +10,7 @@ interface AuthContextType {
   getAccessToken: () => Promise<string>;
   user: User | null;
   needsRegistration: boolean;
+  checkUserRegistration: (force?: boolean) => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -49,59 +50,61 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [getAccessToken]);
 
   useEffect(() => {
-    if (needsRegistration && isAuthenticated && !isLoading && !auth0Loading) {
-      console.log('Redirecting to registration page');
-      navigate('/register');
-    }
-  }, [needsRegistration, isAuthenticated, isLoading, auth0Loading, navigate]);
-
-  useEffect(() => {
-    const checkRegistration = async () => {
-      if (isAuthenticated && !isCheckingRegistration && !needsRegistration) {
-        try {
-          setIsCheckingRegistration(true);
-          setIsLoading(true);
-          console.log('Checking user registration...');
-          const userData = await getUserProfile();
-          console.log('User profile retrieved:', userData);
-          setUser(userData);
-          setNeedsRegistration(false);
-        } catch (error: any) {
-          console.error('Error checking registration:', error);
-          if (error.response?.status === 403) {
-            console.log('User needs registration, redirecting to registration page');
-            setNeedsRegistration(true);
-          }
-        } finally {
-          setIsCheckingRegistration(false);
-          setIsLoading(false);
-          setRegistrationCheckComplete(true);
-        }
-      } else if (!isAuthenticated && !registrationCheckComplete) {
-        setIsLoading(false);
-        setRegistrationCheckComplete(true);
-        setNeedsRegistration(false);
-      }
-    };
-
     if (!auth0Loading) {
       if (!isAuthenticated) {
         setUser(null);
         setNeedsRegistration(false);
         setIsLoading(false);
-      }
-      
-      if (!registrationCheckComplete || (isAuthenticated && !user && !needsRegistration)) {
-        checkRegistration();
+        setRegistrationCheckComplete(true);
+      } else {
+        // Check user registration status
+        checkUserRegistration();
       }
     }
-  }, [isAuthenticated, user, navigate, isCheckingRegistration, auth0Loading, registrationCheckComplete, auth0User, needsRegistration]);
+  }, [isAuthenticated, auth0Loading]);
+
+  // Function to check user registration
+  const checkUserRegistration = useCallback(async (force = false) => {
+    if (isCheckingRegistration && !force) return;
+    
+    try {
+      setIsCheckingRegistration(true);
+      setIsLoading(true);
+      
+      console.log('Checking user registration status...');
+      const userData = await getUserProfile();
+      console.log('User profile retrieved:', userData);
+      
+      setUser(userData);
+      setNeedsRegistration(false);
+    } catch (error: any) {
+      console.error('Error checking registration:', error);
+      if (error.response?.status === 403) {
+        setNeedsRegistration(true);
+      }
+    } finally {
+      setIsCheckingRegistration(false);
+      setIsLoading(false);
+      setRegistrationCheckComplete(true);
+    }
+  }, [isCheckingRegistration]);
+
+  // Redirect to registration page if needed
+  useEffect(() => {
+    if (needsRegistration && isAuthenticated && !auth0Loading && location.pathname !== '/register') {
+      navigate('/register');
+    }
+  }, [needsRegistration, isAuthenticated, auth0Loading, navigate, location.pathname]);
+
+  // Calculate the actual loading state
+  const actuallyLoading = auth0Loading || 
+    (isLoading && !needsRegistration);
 
   // Debug logging
   useEffect(() => {
     console.log('AuthProvider State:', { 
       isAuthenticated, 
-      isLoading: auth0Loading || isLoading,
+      isLoading: actuallyLoading,
       auth0Loading,
       user: user ? 'Set' : 'Not set',
       isCheckingRegistration,
@@ -110,11 +113,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       path: location.pathname,
       auth0User: auth0User ? 'Set' : 'Not set'
     });
-  }, [isAuthenticated, isLoading, auth0Loading, user, isCheckingRegistration, registrationCheckComplete, auth0User, needsRegistration, location.pathname]);
-
-  // Calculate the actual loading state
-  const actuallyLoading = auth0Loading || 
-    (isLoading && !needsRegistration);
+  }, [isAuthenticated, actuallyLoading, auth0Loading, user, isCheckingRegistration, registrationCheckComplete, auth0User, needsRegistration, location.pathname]);
 
   return (
     <AuthContext.Provider value={{ 
@@ -122,7 +121,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       isLoading: actuallyLoading,
       getAccessToken, 
       user,
-      needsRegistration
+      needsRegistration,
+      checkUserRegistration
     }}>
       {children}
     </AuthContext.Provider>

@@ -8,7 +8,7 @@ import LoadingScreen from '@/components/LoadingScreen';
 
 const Register: React.FC = () => {
   const { user: auth0User, isAuthenticated: auth0IsAuthenticated } = useAuth0();
-  const { user, isAuthenticated, isLoading: authLoading, needsRegistration } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, needsRegistration, checkUserRegistration } = useAuth();
   const [username, setUsername] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -56,11 +56,7 @@ const Register: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      console.log('Attempting to register with:', {
-        username,
-        email: auth0User?.email,
-        auth_id: auth0User?.sub
-      });
+      console.log('Registering user with username:', username);
 
       await registerUser({
         username: username,
@@ -68,12 +64,17 @@ const Register: React.FC = () => {
         auth_id: auth0User?.sub || ''
       });
 
-      // Force a reload of the user data after registration
-      window.location.href = '/';
+      console.log('Registration successful, checking user status');
+      
+      // Force a check of the user registration status
+      await checkUserRegistration(true);
+      
+      // Navigate to home page
+      navigate('/', { replace: true });
+      
     } catch (err: any) {
       console.error('Registration error:', err);
       setError(err.response?.data?.detail || 'Failed to register');
-    } finally {
       setLoading(false);
     }
   };
@@ -96,6 +97,15 @@ const Register: React.FC = () => {
     navigate('/');
     return null;
   }
+
+  // Add debug logging
+  console.log("Rendering registration form", {
+    authLoading,
+    needsRegistration,
+    auth0IsAuthenticated,
+    isAuthenticated,
+    hasUsername: !!user?.username
+  });
 
   return (
     <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
