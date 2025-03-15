@@ -343,7 +343,7 @@ const Matches: React.FC = () => {
               }`}
               onClick={() => setActiveTab('pending-validation')}
             >
-              Pending Validations
+              Friends' Matches
               {pendingMatches.length > 0 && (
                 <span className="ml-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
                   {pendingMatches.length}
@@ -380,7 +380,7 @@ const Matches: React.FC = () => {
         <>
           {pendingMatches.length === 0 ? (
             <div className="text-center py-10">
-              <p className="text-gray-500">No matches pending validation.</p>
+              <p className="text-gray-500">No friends'matches available.</p>
             </div>
           ) : (
             <div className="space-y-6">
