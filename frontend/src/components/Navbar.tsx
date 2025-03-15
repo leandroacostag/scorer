@@ -2,9 +2,14 @@ import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useAuth } from '../contexts';
-import { FaHome, FaUserFriends, FaFutbol, FaTrophy, FaSignOutAlt, FaSignInAlt, FaUser, FaSpinner } from 'react-icons/fa';
+import { FaHome, FaUserFriends, FaFutbol, FaTrophy, FaSignOutAlt, FaSignInAlt, FaUser, FaSpinner, FaBars, FaTimes } from 'react-icons/fa';
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  toggleSidebar: () => void;
+  sidebarOpen: boolean;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, sidebarOpen }) => {
   const { loginWithRedirect, logout } = useAuth0();
   const { user, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
@@ -29,9 +34,17 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <header className="bg-green-700 text-white shadow-md">
+      <header className="bg-green-700 text-white shadow-md fixed top-0 left-0 right-0 z-20">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link to="/" className="text-xl font-bold">Scorer</Link>
+          <div className="flex items-center">
+            <button 
+              onClick={toggleSidebar} 
+              className="mr-3 md:hidden text-white focus:outline-none"
+            >
+              {sidebarOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+            </button>
+            <Link to="/" className="text-xl font-bold">Scorer</Link>
+          </div>
           <div className="flex items-center space-x-4">
             {isLoading ? (
               <div className="flex items-center space-x-2">
@@ -68,7 +81,9 @@ const Navbar: React.FC = () => {
       </header>
 
       {showNavItems && (
-        <nav className="w-16 md:w-64 bg-gray-800 text-white fixed left-0 top-16 bottom-0">
+        <nav className={`w-64 bg-gray-800 text-white fixed left-0 top-16 bottom-0 z-10 transform transition-transform duration-300 ease-in-out ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}>
           <div className="py-6 px-2 md:px-6">
             <ul className="space-y-2">
               {navItems.map((item) => {
@@ -80,9 +95,14 @@ const Navbar: React.FC = () => {
                       className={`flex items-center space-x-2 p-2 rounded hover:bg-gray-700 ${
                         location.pathname === item.path ? 'bg-gray-700' : ''
                       }`}
+                      onClick={() => {
+                        if (window.innerWidth < 768) {
+                          toggleSidebar();
+                        }
+                      }}
                     >
                       <span className="text-xl">{item.icon}</span>
-                      <span className="hidden md:inline">{item.label}</span>
+                      <span>{item.label}</span>
                     </Link>
                   </li>
                 );
@@ -90,6 +110,14 @@ const Navbar: React.FC = () => {
             </ul>
           </div>
         </nav>
+      )}
+      
+      {/* Overlay to close sidebar when clicked outside */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-0 md:hidden"
+          onClick={toggleSidebar}
+        ></div>
       )}
     </>
   );

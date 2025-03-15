@@ -18,11 +18,12 @@ interface AuthProviderProps {
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const { isAuthenticated, isLoading: auth0Loading, getAccessTokenSilently } = useAuth0();
+  const { isAuthenticated, isLoading: auth0Loading, getAccessTokenSilently, user: auth0User } = useAuth0();
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckingRegistration, setIsCheckingRegistration] = useState(false);
+  const [registrationCheckComplete, setRegistrationCheckComplete] = useState(false);
 
   const getAccessToken = useCallback(async () => {
     try {
@@ -46,7 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const checkRegistration = async () => {
-      if (isAuthenticated && !user && !isCheckingRegistration) {
+      if (isAuthenticated && !isCheckingRegistration) {
         try {
           setIsCheckingRegistration(true);
           setIsLoading(true);
@@ -62,14 +63,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } finally {
           setIsCheckingRegistration(false);
           setIsLoading(false);
+          setRegistrationCheckComplete(true);
         }
-      } else if (!isAuthenticated) {
+      } else if (!isAuthenticated && !registrationCheckComplete) {
         setIsLoading(false);
+        setRegistrationCheckComplete(true);
       }
     };
 
-    checkRegistration();
-  }, [isAuthenticated, user, navigate, isCheckingRegistration]);
+    if (!auth0Loading) {
+      if (!isAuthenticated) {
+        setUser(null);
+      }
+      
+      if (!registrationCheckComplete || (isAuthenticated && !user)) {
+        checkRegistration();
+      }
+    }
+  }, [isAuthenticated, user, navigate, isCheckingRegistration, auth0Loading, registrationCheckComplete, auth0User]);
 
   // Debug logging
   useEffect(() => {
@@ -78,9 +89,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       isLoading: auth0Loading || isLoading,
       auth0Loading,
       user: user ? 'Set' : 'Not set',
-      isCheckingRegistration
+      isCheckingRegistration,
+      registrationCheckComplete,
+      auth0User: auth0User ? 'Set' : 'Not set'
     });
-  }, [isAuthenticated, isLoading, auth0Loading, user, isCheckingRegistration]);
+  }, [isAuthenticated, isLoading, auth0Loading, user, isCheckingRegistration, registrationCheckComplete, auth0User]);
 
   return (
     <AuthContext.Provider value={{ 
