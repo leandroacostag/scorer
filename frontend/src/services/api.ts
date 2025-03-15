@@ -1,8 +1,13 @@
 import axios from 'axios';
 import { User, UserCreate, Match, UserStats, LeaderboardEntry } from '../types';
 
+// Get API URL from window.ENV or fallback to localhost:8000
+const API_URL = (window.ENV && window.ENV.API_URL) || 'http://localhost:8000/api';
+
+console.log('API URL being used:', API_URL);
+
 const api = axios.create({
-  baseURL: '/api',  // Use relative path for production
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json'
   },

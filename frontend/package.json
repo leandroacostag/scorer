@@ -33,7 +33,7 @@
   "scripts": {
     "prestart": "cross-env NODE_ENV=development node scripts/generate-env-config.js",
     "start": "craco start",
-    "start:local": "cross-env NODE_ENV=development API_URL=http://localhost:8000 node scripts/generate-env-config.js && craco start",
+    "start:local": "cross-env NODE_ENV=development node scripts/generate-env-config.js && craco start",
     "start:prod": "node scripts/generate-env-config.js && npx serve -s build",
     "prebuild": "cross-env NODE_ENV=production node scripts/generate-env-config.js",
     "build": "craco build",

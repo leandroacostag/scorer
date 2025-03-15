@@ -25,7 +25,7 @@ const envConfig = {
   AUTH0_DOMAIN: process.env.AUTH0_DOMAIN || '',
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID || '',
   AUTH0_AUDIENCE: process.env.AUTH0_AUDIENCE || '',
-  API_URL: process.env.API_URL || 'http://localhost:8000'
+  API_URL: process.env.API_URL || 'http://localhost:8000/api'
 };
 
 // Log environment variables (without showing actual values in production)
