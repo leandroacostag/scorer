@@ -131,11 +131,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 @router.post("/register", response_model=UserResponse)
 async def register_user(user_data: UserCreate):
     logger.debug(f"Registration attempt for auth_id: {user_data.auth_id}")
-    
-    # First, let's check what's in the database
-    all_users = list(users_collection.find({"auth_id": user_data.auth_id}))
-    logger.debug(f"All users with this auth_id: {format_struct_log(all_users)}")
-    
+        
     # Check if username is already taken
     existing_username = users_collection.find_one({"username": user_data.username})
     if existing_username:
@@ -162,7 +158,6 @@ async def register_user(user_data: UserCreate):
                 {"_id": existing_user["_id"]},
                 {"$set": {
                     "username": user_data.username,
-                    "email": user_data.email,
                     "created_at": now
                 }}
             )
@@ -204,16 +199,9 @@ async def register_user(user_data: UserCreate):
     }
     
     result = users_collection.insert_one(user)
-    user["_id"] = result.inserted_id
     
     return UserResponse(
-        id=str(user["_id"]),
-        username=user["username"],
-        email=user["email"],
-        friends=user["friends"],
-        pending_sent_requests=user["pending_sent_requests"],
-        pending_received_requests=user["pending_received_requests"],
-        created_at=user["created_at"]
+        **user
     )
 
 @router.get("/me", response_model=UserResponse)

@@ -54,7 +54,7 @@ class MatchValidation(BaseModel):
     timestamp: datetime = Field(default_factory=datetime.now)
 
 class MatchBase(BaseModel):
-    date: datetime
+    date: str
     location: str
     time: str
     format: Literal["F5", "F6", "F7", "F8", "F9", "F10", "F11"]
