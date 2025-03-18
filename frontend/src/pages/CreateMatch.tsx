@@ -57,22 +57,16 @@ const CreateMatch: React.FC = () => {
         assists: parseInt(formData.assists.toString())
       };
       
-      // Calculate scores based on the match result if not using explicit scores
-      let teamAScore = parseInt(formData.scoreMyTeam.toString());
-      let teamBScore = parseInt(formData.scoreOppositeTeam.toString());
+      // Determine winning team based on the match result
+      let winningTeam: "A" | "B" | "draw";
       
-      if (!formData.useScore) {
-        if (formData.result === 'win') {
-          teamAScore = 1;
-          teamBScore = 0;
-        } else if (formData.result === 'lose') {
-          teamAScore = 0;
-          teamBScore = 1;
-        } else {
-          // Draw
-          teamAScore = 0;
-          teamBScore = 0;
-        }
+      if (formData.result === 'win') {
+        winningTeam = 'A';
+      } else if (formData.result === 'lose') {
+        winningTeam = 'B';
+      } else {
+        // Draw
+        winningTeam = 'draw';
       }
       
       const matchData = {
@@ -80,10 +74,7 @@ const CreateMatch: React.FC = () => {
         location: formData.location,
         time: formData.time,
         format: formData.format,
-        score: {
-          teamA: teamAScore,
-          teamB: teamBScore
-        },
+        winning_team: winningTeam,
         players: [playerData]
       };
       

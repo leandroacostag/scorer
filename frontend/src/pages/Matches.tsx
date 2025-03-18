@@ -166,11 +166,11 @@ const Matches: React.FC = () => {
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold">
-              {match.score.teamA} - {match.score.teamB}
+              {renderMatchResult(match)}
             </div>
-            <div className="text-xs text-gray-500">
+            {/* <div className="text-xs text-gray-500">
               Team A - Team B
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -277,6 +277,16 @@ const Matches: React.FC = () => {
       </div>
     </div>
   );
+
+  const renderMatchResult = (match: Match) => {
+    if (match.winning_team === 'A') {
+      return <span className="text-green-600 font-bold">Team A Won</span>;
+    } else if (match.winning_team === 'B') {
+      return <span className="text-red-600 font-bold">Team B Won</span>;
+    } else {
+      return <span className="text-gray-600 font-bold">Draw</span>;
+    }
+  };
 
   if (loading && !refreshing) {
     return (

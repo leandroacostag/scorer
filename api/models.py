@@ -65,13 +65,13 @@ class MatchBase(BaseModel):
 
 class MatchCreate(MatchBase):
     players: List[PlayerStats]
-    score: Dict[str, int] = {"teamA": 0, "teamB": 0}
+    winning_team: Literal["A", "B", "draw"]
 
 class MatchInDB(MatchBase):
     match_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     created_by: str
     players: List[PlayerStats]
-    score: Dict[str, int] = {"teamA": 0, "teamB": 0}
+    winning_team: Literal["A", "B", "draw"]
     validations: List[MatchValidation] = []
     is_validated: bool = False
     created_at: datetime = Field(default_factory=datetime.now)
@@ -80,10 +80,17 @@ class MatchResponse(MatchBase):
     match_id: str
     created_by: str
     players: List[Dict]
-    score: Dict[str, int]
+    winning_team: Literal["A", "B", "draw"]
     validations: List[Dict]
     is_validated: bool
     created_at: datetime
 
 class FriendRequest(BaseModel):
-    user_id: str 
+    user_id: str
+
+class Match(BaseModel):
+    match_id: str
+    created_by: str
+    players: List[Dict]
+    winning_team: str  # "A", "B", or "draw"
+    # other fields remain the same 

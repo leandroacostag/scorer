@@ -55,6 +55,6 @@ pip install -r requirements.txt
 
 # Start the API server
 echo "Starting uvicorn server..."
-python -m uvicorn main:app --host 0.0.0.0 --port 8000
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 # Note: This script will keep running until manually stopped (Ctrl+C) 

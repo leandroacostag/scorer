@@ -188,6 +188,16 @@ const MatchesPage: React.FC = () => {
     }
   };
   
+  const renderMatchResult = (match: Match) => {
+    if (match.winning_team === 'A') {
+      return <span className="text-green-600 font-bold">Team A Won</span>;
+    } else if (match.winning_team === 'B') {
+      return <span className="text-red-600 font-bold">Team B Won</span>;
+    } else {
+      return <span className="text-gray-600 font-bold">Draw</span>;
+    }
+  };
+  
   const renderMatchCard = (match: Match, showValidate = false) => {
     return (
       <div key={match.match_id} className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -204,7 +214,7 @@ const MatchesPage: React.FC = () => {
             </div>
             <div className="text-right">
               <div className="text-2xl font-bold">
-                {match.score.teamA} - {match.score.teamB}
+                {renderMatchResult(match)}
               </div>
               <div className="text-xs text-gray-500">
                 Team A - Team B

@@ -33,10 +33,7 @@ export interface Match {
   created_by: string;
   creator_username?: string;
   players: PlayerStats[];
-  score: {
-    teamA: number;
-    teamB: number;
-  };
+  winning_team: "A" | "B" | "draw";
   validations: {
     user_id: string;
     timestamp: string;

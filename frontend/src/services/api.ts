@@ -112,7 +112,7 @@ export const deleteFriend = async (userId: string): Promise<void> => {
 
 // Matches API
 export const createMatch = async (matchData: any) => {
-  const response = await api.post('/matches/create', matchData);
+  const response = await api.post('/matches', matchData);
   return response.data;
 };
 
@@ -143,8 +143,8 @@ export const getLeaderboard = async (year?: string) => {
 };
 
 // Add a new function to add player stats to a match
-export const addPlayerStatsToMatch = async (matchId: string, playerStats: any) => {
-  const response = await api.post<Match>(`/matches/${matchId}/players`, playerStats);
+export const addPlayerStatsToMatch = async (matchId: string, playerData: any) => {
+  const response = await api.post(`/matches/${matchId}/players`, playerData);
   return response.data;
 };
 

@@ -16,8 +16,9 @@ db = client.scorer
 matches_collection = db.matches
 users_collection = db.users
 
-@router.post("/create", response_model=MatchResponse)
+@router.post("/", response_model=MatchResponse)
 async def create_match(match: MatchCreate, current_user: UserInDB = Depends(get_current_user)):
+    """Create a new match with the current user as creator"""
     match_data = match.dict()
     
     # Create new match with UUID
@@ -91,7 +92,7 @@ async def get_user_matches(current_user: UserInDB = Depends(get_current_user)):
             {"created_by": current_user.auth_id},
             {"players.user_id": current_user.auth_id}
         ]
-    }, {"_id": 0}))
+    }, {"_id": 0}).sort("date", -1))
     
     # Enrich matches with username information
     for match in matches:
@@ -188,16 +189,12 @@ async def get_user_stats(current_user: UserInDB = Depends(get_current_user)):
                 break
         
         if user_team:
-            if match["score"]["teamA"] > match["score"]["teamB"] and user_team == "A":
+            if match["winning_team"] == user_team:
                 stats["wins"] += 1
-            elif match["score"]["teamB"] > match["score"]["teamA"] and user_team == "B":
-                stats["wins"] += 1
-            elif match["score"]["teamA"] < match["score"]["teamB"] and user_team == "A":
-                stats["losses"] += 1
-            elif match["score"]["teamB"] < match["score"]["teamA"] and user_team == "B":
-                stats["losses"] += 1
-            else:
+            elif match["winning_team"] == "draw":
                 stats["draws"] += 1
+            else:
+                stats["losses"] += 1
     
     return stats
 
@@ -258,11 +255,10 @@ async def get_leaderboard(year: Optional[str] = None, current_user: UserInDB = D
                 user_stats["goals"] += player["goals"]
                 user_stats["assists"] += player["assists"]
                 
-                # Determine win/draw/loss based on team and score
-                if (player["team"] == "A" and match["score"]["teamA"] > match["score"]["teamB"]) or \
-                   (player["team"] == "B" and match["score"]["teamB"] > match["score"]["teamA"]):
+                # Determine win/draw/loss based on team and winning_team
+                if match["winning_team"] == player["team"]:
                     user_stats["wins"] += 1
-                elif match["score"]["teamA"] == match["score"]["teamB"]:
+                elif match["winning_team"] == "draw":
                     user_stats["draws"] += 1
                 else:
                     user_stats["losses"] += 1
@@ -352,18 +348,7 @@ async def add_player_to_match(
             detail="Failed to add player to match"
         )
     
-    # Recalculate the match score
-    updated_match = matches_collection.find_one({"match_id": match_id}, {"_id": 0})
-    
-    # Calculate team scores based on player goals
-    team_a_score = sum(p["goals"] for p in updated_match["players"] if p["team"] == "A")
-    team_b_score = sum(p["goals"] for p in updated_match["players"] if p["team"] == "B")
-    
-    # Update match scores
-    matches_collection.update_one(
-        {"match_id": match_id},
-        {"$set": {"score": {"teamA": team_a_score, "teamB": team_b_score}}}
-    )
+    # No need to update score anymore, as we're using winning_team
     
     # Add automatic validation from this user
     validation = {
