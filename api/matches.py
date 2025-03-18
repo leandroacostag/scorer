@@ -366,6 +366,26 @@ async def add_player_to_match(
         {"$set": {"score": {"teamA": team_a_score, "teamB": team_b_score}}}
     )
     
+    # Add automatic validation from this user
+    validation = {
+        "user_id": current_user.auth_id,
+        "timestamp": datetime.now()
+    }
+    
+    matches_collection.update_one(
+        {"match_id": match_id},
+        {"$push": {"validations": validation}}
+    )
+    
+    # Check if we should auto-validate the match
+    # If there are at least 2 players in the match, automatically validate it
+    updated_match = matches_collection.find_one({"match_id": match_id}, {"_id": 0})
+    if len(updated_match["players"]) >= 2:
+        matches_collection.update_one(
+            {"match_id": match_id},
+            {"$set": {"is_validated": True}}
+        )
+    
     # Return the updated match
     final_match = matches_collection.find_one({"match_id": match_id}, {"_id": 0})
     return MatchResponse(**final_match)
