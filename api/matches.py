@@ -240,8 +240,7 @@ async def get_leaderboard(year: Optional[str] = None, current_user: UserInDB = D
         
         # Add year filter if provided
         if year:
-            # Extract year from date field (assuming ISO format YYYY-MM-DD)
-            match_query["$expr"] = {"$eq": [{"$year": "$date"}, int(year)]}
+            match_query["date"] = {"$regex": f"^{year}"}
         
         matches = matches_collection.find(match_query, {"_id": 0})
         
